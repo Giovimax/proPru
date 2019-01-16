@@ -9,7 +9,6 @@ int relayPin_irrigazione = 9; // pin relativo al relay dell'irrigazione
   int sensore2 = 6;
   int resistenzaLitri = A0;
   int ledPin = 13;
-
 /*Tl è ora impostato per indicare 1/2 litri */
 // nuove variabili relative all'
   long  G = 86400000;//
@@ -32,6 +31,16 @@ int relayPin_irrigazione = 9; // pin relativo al relay dell'irrigazione
   unsigned long lastLedActivation = 0;
   bool ledState = false;
 
+  //variabili isFloating
+  unsigned long int clockCycles = 0;
+  unsigned long int prevClockCycles = 0;
+  int nOfCicles = 100;
+  //per manopola
+  unsigned long IF_manopola_total = 0;
+  unsigned long IF_manopola_sumOfDifferences = 0;
+  int IF_manopola_previousAverage = 0;
+  unsigned long lastproblem = 0;
+
 
   //definizione funzione che segna converte in litri
   int toLiter(int analog) {
@@ -49,6 +58,41 @@ int relayPin_irrigazione = 9; // pin relativo al relay dell'irrigazione
      Serial.println(intervallo);
   }
 
+// funzione base per determinare se un pin è scollegato
+  int isFloating(int pin) {
+    /*alcune variabili sono da settare per ogni istanza in cui si usa la funzione
+
+    unsigned long IF_nomeSistema_total
+    unsigned long IF_nomeSistema_sumOfDifferences
+    int IF_nomeSistema_previousAverage
+    int nOfCicles = 100
+    */
+    int value = analogRead(pin);
+    IF_manopola_total += value;
+    int toSquare = value - IF_manopola_previousAverage; // solo per alleggerire la sintassi
+    IF_manopola_sumOfDifferences += toSquare * toSquare;
+
+    if (clockCycles - prevClockCycles >= nOfCicles) {
+      bool toReturn = false;
+      IF_manopola_previousAverage = IF_manopola_total/nOfCicles; //crea la nuova media
+      int std = sqrt(IF_manopola_sumOfDifferences/nOfCicles); //calcola prima la varianza poi la standardDeviation
+      if (std >= 100) { //NUMERO DA DEFINIRE, decide toReturn
+        toReturn = true; //la varianza è tale da affermare che l'imput è random
+      }
+      else {
+        toReturn = false;
+      }
+      //azzero le variabili semifisse
+      IF_manopola_total = 0;
+      IF_manopola_sumOfDifferences =0;
+      //setto il ciclo
+      prevClockCycles = clockCycles;
+      //chiudo la funzione
+      return toReturn;
+    }
+    //no else required
+
+  }
 
 //test impianto sensori
 bool shutDown = false; //quando true stacca il relay
@@ -85,7 +129,8 @@ void setup(/* arguments */) {
 void loop(/* arguments */) {
 
 unsigned long currentMillis = millis();//rinomino millis in currentMillis
-
+//variabili isFloating
+clockCycles ++; 
 
 //parte relativa all'insonorizzazione
 if (true) {
@@ -114,12 +159,18 @@ if (true) {
 
   //parte relativa all'analog INPUT
   analogSignal = analogRead(resistenzaLitri);
-  if(analogSignal <= analogSignal_stabile-5 || analogSignal >= analogSignal_stabile+5) {
-    analogSignal_stabile = analogSignal;
-    l = toLiter(analogSignal_stabile);//dunque non deve fare tutti i calcoli ogni volta
-    aggiornamentoTempi();
-    Serial.println("l = ");
-    Serial.print(l);
+  if (!isFloating(resistenzaLitri)){
+    lastproblem = currentMillis;
+  }
+
+  if (currentMillis - lastproblem >= 1000){// se è passato più di un secondo dall'ultimo rilevamento di varianza toppo alta
+    if(analogSignal <= analogSignal_stabile-5 || analogSignal >= analogSignal_stabile+5) {
+      analogSignal_stabile = analogSignal;
+      l = toLiter(analogSignal_stabile);//dunque non deve fare tutti i calcoli ogni volta
+      aggiornamentoTempi();
+      Serial.println("l = ");
+      Serial.print(l);
+    }
   }
 
 //controllo del led
