@@ -31,6 +31,8 @@ int relayPin_irrigazione = 9; // pin relativo al relay dell'irrigazione
   //relativo al funzionamento del led
   unsigned long lastLedActivation = 0;
   bool ledState = false;
+  //parte relativa al bottone
+  int buttonPin = 8;
 
 
   //definizione funzione che segna converte in litri
@@ -140,6 +142,10 @@ if (true) {
   }
     //core della funzione di irrigazione
   if (true) {
+    //imposto la parte del bottone
+    int buttonState = digitalRead(buttonPin);
+
+
     if(currentMillis - ultimaAzioneIrrigazione >= intervalloCorrenteIrrigazione) {
       ultimaAzioneIrrigazione = currentMillis;
       if(statoIrrigazione == false) {
@@ -154,6 +160,21 @@ if (true) {
         digitalWrite(relayPin_irrigazione, HIGH);//il relay si spegne
         intervalloCorrenteIrrigazione = intervallo;
         Serial.println("stop");
+      }
+      else if (buttonState) { //buttonState è true quando il bottone premuto
+        if (statoIrrigazione) {//se si sta irrigando, termina forzatamente
+          statoIrrigazione = false;
+          digitalWrite(relayPin_irrigazione, HIGH);
+          Serial.println("stop forzato");
+        }
+        else () { //se non si sta irrigando, irriga
+          ultimaAzioneIrrigazione = currentMillis;
+          statoIrrigazione = true;
+          digitalWrite(relayPin_irrigazione, LOW);//il relay si attiva
+          intervalloCorrenteIrrigazione = round(Tl);
+          Serial.println("go forzato");
+        }
+        delay(200); //in ogni caso metto un delay così evito loop
       }
     }
   }
