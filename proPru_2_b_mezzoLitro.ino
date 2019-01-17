@@ -31,6 +31,8 @@ int relayPin_irrigazione = 9; // pin relativo al relay dell'irrigazione
   //relativo al funzionamento del led
   unsigned long lastLedActivation = 0;
   bool ledState = false;
+  //ledIrrigazione
+  int ledIrrigazione = 7;
 
 
   //definizione funzione che segna converte in litri
@@ -80,6 +82,8 @@ void setup(/* arguments */) {
   //primo settaggio dei tempi
   aggiornamentoTempi();
   Serial.println(Tl);
+  //ledIrrigazione
+  pinMode(ledIrrigazione, OUTPUT);
 }
 
 void loop(/* arguments */) {
@@ -156,5 +160,14 @@ if (true) {
         Serial.println("stop");
       }
     }
+    //parte relativa al ledIrrigazione
+    if (true){ //devo usare un if true per poter usare l'else
+      if (statoIrrigazione) {//se irrighiamo il led è acceso
+        digitalWrite(ledIrrigazione, HIGH);
+      }
+      else () { //altrimenti spento
+        digitalWrite(ledIrrigazione, LOW);
+      }
+    } 
   }
 }
