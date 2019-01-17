@@ -82,6 +82,8 @@ void setup(/* arguments */) {
   //primo settaggio dei tempi
   aggiornamentoTempi();
   Serial.println(Tl);
+  //parte relativa al bottone
+  pinMode(buttonPin, INPUT);
 }
 
 void loop(/* arguments */) {
