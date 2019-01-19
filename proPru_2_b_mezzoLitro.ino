@@ -165,9 +165,9 @@ if (true) {
       if (statoIrrigazione) {//se irrighiamo il led è acceso
         digitalWrite(ledIrrigazione, HIGH);
       }
-      else () { //altrimenti spento
+      else { //altrimenti spento
         digitalWrite(ledIrrigazione, LOW);
       }
-    } 
+    }
   }
 }
