@@ -2,6 +2,9 @@
 */
 //variabili
 
+#include <stdio.h> // for function sprintf
+
+int debug = true
 int relayPin_irrigazione = 9; // pin relativo al relay dell'irrigazione
   int relayPin_estrattore = 8; // pin ventola temp
   int sensore0 = 2;
@@ -66,7 +69,14 @@ unsigned long currentMillis = millis();//rinomino millis in currentMillis
 
 //parte relativa all'insonorizzazione
 if (true) {
-  if(digitalRead(sensore0) == HIGH || digitalRead(sensore1) == HIGH || digitalRead(sensore2) == HIGH) {//se uno dei sensori è triggherato
+  if (debug) {
+    int in0 = digitalRead(sensore0);
+    int in1 = digitalRead(sensore1);
+    int in2 = digitalRead(sensore2);
+  }
+
+  Serial.printf("in0: %i, in1: %i, in2: %i,\n",in0, in1, in2);
+  if(in0 == HIGH || in1 == HIGH || in2 == HIGH) {//se uno dei sensori è triggherato
     if (shutDown == false) {
       shutDown = true;//si attiva lo stato di shutdown
       digitalWrite(relayPin_estrattore, HIGH);//cambio stato relay
