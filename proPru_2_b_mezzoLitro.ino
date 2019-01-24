@@ -69,19 +69,20 @@ unsigned long currentMillis = millis();//rinomino millis in currentMillis
 
 //parte relativa all'insonorizzazione
 if (true) {
+
+  int in0 = digitalRead(sensore0);
+  int in1 = digitalRead(sensore1);
+  int in2 = digitalRead(sensore2);
+
   if (debug) {
-    int in0 = digitalRead(sensore0);
-    int in1 = digitalRead(sensore1);
-    int in2 = digitalRead(sensore2);
+  Serial.printf("in0: %i, in1: %i, in2: %i,\n",in0, in1, in2);
   }
 
-  Serial.printf("in0: %i, in1: %i, in2: %i,\n",in0, in1, in2);
   if(in0 == HIGH || in1 == HIGH || in2 == HIGH) {//se uno dei sensori è triggherato
     if (shutDown == false) {
       shutDown = true;//si attiva lo stato di shutdown
       digitalWrite(relayPin_estrattore, HIGH);//cambio stato relay
-      Serial.println("Spegnimento");
-
+      Serial.println("Spegnimento estrazione");
     }
     /*l'aggiornamento del momento di attivazione  del sensore viene aggiornato
     ogni volta che lo stesso si attiva, il processo di cambio di stato del relay
@@ -89,7 +90,6 @@ if (true) {
     */
     shutDownStart = millis();//si segna il momento di inizio
 
-    Serial.println("att");
   }
   else if (shutDown == true && currentMillis - shutDownStart >= shutDownInterval) {
     shutDown = false;
