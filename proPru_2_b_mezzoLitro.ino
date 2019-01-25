@@ -2,15 +2,13 @@
 */
 //variabili
 
-#include <stdio.h> // for function sprintf
 
-int debug = true
-int relayPin_irrigazione = 9; // pin relativo al relay dell'irrigazione
+  int debug = true;
+  int relayPin_irrigazione = 9; // pin relativo al relay dell'irrigazione
   int relayPin_estrattore = 8; // pin ventola temp
   int sensore0 = 2;
   int sensore1 = 4;
   int sensore2 = 6;
-  int resistenzaLitri = A0;
   int ledPin = 13;
 
 /*Tl è ora impostato per indicare 1/2 litri */
@@ -58,11 +56,13 @@ void setup(/* arguments */) {
   //setto in modo verboso il valore iniziale dell'analog
 
   //primo settaggio dei tempi
-  aggiornamentoTempi();
   Serial.println(Tl);
 }
 
 void loop(/* arguments */) {
+  if (debug) {
+    delay(500);
+  }
 
 unsigned long currentMillis = millis();//rinomino millis in currentMillis
 
@@ -75,7 +75,12 @@ if (true) {
   int in2 = digitalRead(sensore2);
 
   if (debug) {
-  Serial.printf("in0: %i, in1: %i, in2: %i,\n",in0, in1, in2);
+  Serial.print("in0:");
+  Serial.println(in0);
+  Serial.print("in1:");
+  Serial.println(in1);
+  Serial.print("in2:");
+  Serial.println(in2);
   }
 
   if(in0 == HIGH || in1 == HIGH || in2 == HIGH) {//se uno dei sensori è triggherato
@@ -99,7 +104,6 @@ if (true) {
 
 }
 
-  }
     //core della funzione di irrigazione
   if (true) {
     if(currentMillis - ultimaAzioneIrrigazione >= intervalloCorrenteIrrigazione) {
