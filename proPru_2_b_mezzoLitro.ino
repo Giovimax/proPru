@@ -34,6 +34,8 @@
 bool shutDown = false; //quando true stacca il relay
 long shutDownInterval = 60000;
 unsigned long shutDownStart = 0;
+//per debug
+unsigned long cCycles = 0;
 
 
 
@@ -62,47 +64,53 @@ void setup(/* arguments */) {
 void loop(/* arguments */) {
   if (debug) {
     delay(500);
+    cCycles ++;
+    Serial.println(cCycles);
   }
 
-unsigned long currentMillis = millis();//rinomino millis in currentMillis
+  unsigned long currentMillis = millis();//rinomino millis in currentMillis
 
 
-//parte relativa all'insonorizzazione
-if (true) {
+  //parte relativa all'insonorizzazione
+  if (true) {
 
-  int in0 = digitalRead(sensore0);
-  int in1 = digitalRead(sensore1);
-  int in2 = digitalRead(sensore2);
+    int in0 = digitalRead(sensore0);
+    int in1 = digitalRead(sensore1);
+    int in2 = digitalRead(sensore2);
 
-  if (debug) {
-  Serial.print("in0:");
-  Serial.println(in0);
-  Serial.print("in1:");
-  Serial.println(in1);
-  Serial.print("in2:");
-  Serial.println(in2);
-  }
-
-  if(in0 == HIGH || in1 == HIGH || in2 == HIGH) {//se uno dei sensori è triggherato
-    if (shutDown == false) {
-      shutDown = true;//si attiva lo stato di shutdown
-      digitalWrite(relayPin_estrattore, HIGH);//cambio stato relay
-      Serial.println("Spegnimento estrazione");
+    if (debug) {
+    Serial.print("in0:");
+    Serial.println(in0);
+    Serial.print("in1:");
+    Serial.println(in1);
+    Serial.print("in2:");
+    Serial.println(in2);
     }
-    /*l'aggiornamento del momento di attivazione  del sensore viene aggiornato
-    ogni volta che lo stesso si attiva, il processo di cambio di stato del relay
-    etc avvengono solo alla prima attivazione.
-    */
-    shutDownStart = millis();//si segna il momento di inizio
 
-  }
-  else if (shutDown == true && currentMillis - shutDownStart >= shutDownInterval) {
-    shutDown = false;
-    digitalWrite(relayPin_estrattore, LOW);
-    Serial.println("Attivazione");
-  }
+    if(in0 == HIGH || in1 == HIGH || in2 == HIGH) {//se uno dei sensori è triggherato
+      /*l'aggiornamento del momento di attivazione  del sensore viene aggiornato
+      ogni volta che lo stesso si attiva, il processo di cambio di stato del relay
+      etc avvengono solo alla prima attivazione.
+      */
+      shutDownStart = millis();//si segna il momento di inizio
+      digitalWrite(13,HIGH);//attiva il led onboard
+      if (shutDown == false) {
+        shutDown = true;//si attiva lo stato di shutdown
+        digitalWrite(relayPin_estrattore, HIGH);//cambio stato relay
+        Serial.println("Spegnimento estrazione");
+      }
 
-}
+
+    }
+    else if (shutDown == true && currentMillis - shutDownStart >= shutDownInterval) {
+      shutDown = false;
+      digitalWrite(relayPin_estrattore, LOW);
+      Serial.println("Attivazione");
+    }
+    else {
+      digitalWrite(13,LOW);//spegne led onboard se non ci sono segnali
+    }
+  }
 
     //core della funzione di irrigazione
   if (true) {
