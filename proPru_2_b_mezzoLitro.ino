@@ -87,7 +87,7 @@ void loop(/* arguments */) {
     Serial.println(in2);
     }
 
-    if(in0 == HIGH || in1 == HIGH || in2 == HIGH) {//se uno dei sensori è triggherato
+    if(/*in0 == HIGH || */in1 == HIGH || in2 == HIGH) {//se uno dei sensori è triggherato
       /*l'aggiornamento del momento di attivazione  del sensore viene aggiornato
       ogni volta che lo stesso si attiva, il processo di cambio di stato del relay
       etc avvengono solo alla prima attivazione.
