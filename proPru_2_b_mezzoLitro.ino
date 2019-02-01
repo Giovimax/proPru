@@ -3,9 +3,9 @@
 //variabili
 
 
-  int debug = true;
-  int relayPin_irrigazione = 9; // pin relativo al relay dell'irrigazione
-  int relayPin_estrattore = 8; // pin ventola temp
+  int debug = false;
+  int relayPin_irrigazione = 8; // pin relativo al relay dell'irrigazione
+  int relayPin_estrattore = 9; // pin ventola temp
   int sensore0 = 2;
   int sensore1 = 4;
   int sensore2 = 6;
@@ -14,7 +14,7 @@
 /*Tl è ora impostato per indicare 1/2 litri */
 // nuove variabili relative all'
   long  G = 86400000;//
-  float Tl = 46666.666666666664; //70/3*1000 70/3 è il quantitativo di secondi per erigare un l
+  float Tl = 6000; //120/5 è il quantitativo di secondi per erigare un l
   int l = 1;
   /*l'è quantità di litri da erogarre ogni giorno, sarà aggiornata da una
   funzione che trasforma l'analog input in litri, tale quantità sarà espressa
